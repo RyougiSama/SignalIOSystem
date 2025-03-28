@@ -4,6 +4,7 @@
 MainInterface::MainInterface(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MainInterfaceClass())
+    , model(new SignalModel(this))
 {
     ui->setupUi(this);
 
@@ -19,7 +20,7 @@ MainInterface::~MainInterface()
     delete ui;
 }
 
-// Updata functons
+// Update functons
 void MainInterface::updataNoiseDiscription()
 {
     ui->textBrowser_NoiseDiscription->setText(
@@ -46,5 +47,11 @@ QString MainInterface::get_noise_discription(int noise_id)
     }
 
     return tmp;
+}
+
+// Slots
+void MainInterface::on_pushButton_loadData_clicked()
+{
+
 }
 

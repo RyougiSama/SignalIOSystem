@@ -21,6 +21,8 @@ set(PROJECT_SOURCES
     MainInterface.ui
     MainInterface.h
     MainInterface.cpp
+    SignalModel.h
+    SignalModel.cpp
 )
 
 qt_add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})

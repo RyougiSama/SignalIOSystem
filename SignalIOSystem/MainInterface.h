@@ -4,6 +4,7 @@
 #include "ui_MainInterface.h"
 
 #include <qstring.h>
+#include "SignalModel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainInterfaceClass; };
@@ -21,6 +22,10 @@ private:
     QString get_noise_discription(int noise_id);
     void updataNoiseDiscription();
 
+private slots:
+    void on_pushButton_loadData_clicked();
+
 private:
     Ui::MainInterfaceClass *ui;
+    SignalModel *model = nullptr;
 };
