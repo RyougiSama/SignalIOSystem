@@ -3,7 +3,6 @@
 #include <QtWidgets/QWidget>
 #include "ui_MainInterface.h"
 
-#include <qstring.h>
 #include "SignalModel.h"
 
 QT_BEGIN_NAMESPACE
@@ -20,7 +19,7 @@ public:
 
 private:
     QString get_noise_discription(int noise_id);
-    void updataNoiseDiscription();
+    void updateNoiseDiscription();
 
 private slots:
     void on_pushButton_loadData_clicked();
