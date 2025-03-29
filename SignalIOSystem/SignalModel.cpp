@@ -26,7 +26,7 @@ void SignalModel::loadSignalFromData(const QString &file_name)
     QTextStream in(&file);
     auto head_line = in.readLine();
     auto head_line_parts = head_line.split(' ', Qt::SkipEmptyParts);
-    this->sample_freq = head_line_parts[1].toDouble();
+    this->sample_rate = head_line_parts[1].toDouble();
 
     while (!in.atEnd()) {
         auto line = in.readLine();

@@ -25,5 +25,5 @@ private:
     QFile file;
     // Signal
     QList<double> signal_raw_data;
-    double sample_freq = 0;
+    double sample_rate = 0;
 };

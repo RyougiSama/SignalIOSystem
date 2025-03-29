@@ -6,6 +6,7 @@ MainInterface::MainInterface(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MainInterfaceClass())
     , model(new SignalModel(this))
+    , time_view(new SignalTimeDomainView(this))
 {
     ui->setupUi(this);
 

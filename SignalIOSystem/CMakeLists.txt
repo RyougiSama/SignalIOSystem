@@ -23,6 +23,8 @@ set(PROJECT_SOURCES
     MainInterface.cpp
     SignalModel.h
     SignalModel.cpp
+    SignalTimeDomainView.h
+    SignalTimeDomainView.cpp
 )
 
 qt_add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
