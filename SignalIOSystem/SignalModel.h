@@ -8,7 +8,20 @@
 #include <QObject>
 #include <qlist.h>
 #include <qfile.h>
+#include <qstring.h>
 
+
+struct SineConfig {
+    double frequency;
+    double phase;
+    double amplitude;
+};
+
+struct SignalConfig {
+    double sample_rate;
+    SineConfig sine1;
+    SineConfig sine2;
+};
 
 class SignalModel : public QObject
 {
@@ -19,11 +32,31 @@ public:
     ~SignalModel();
 
     void loadSignalFromData(const QString &file_name);
+    void loadSignalFromConfig(const QString &file_name, const QString &student_id);
+
+    const QString &get_student_id() const { return this->student_id; }
+    double get_signal_freq() const { return this->signal_freq; }
 
 private:
-    // File
+    void search_student_id_config(const QString &student_id);
+
+public:
+    enum SignalFileType {
+        NONE = 0,
+        LOAD_FROM_DATA,
+        LOAD_FROM_CONFIG
+    };
+
+private:
+    // FileIO
     QFile file;
-    // Signal
+    // Signal from data
     QList<double> signal_raw_data;
-    double sample_rate = 0;
+    QString student_id;
+    double signal_freq = 0;
+    // Signal from config
+    SignalConfig signal_config;
+
+signals:
+    void signalFileLoaded(SignalFileType file_t);
 };

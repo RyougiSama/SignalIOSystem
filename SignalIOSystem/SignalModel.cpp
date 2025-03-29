@@ -17,7 +17,7 @@ SignalModel::~SignalModel()
 
 void SignalModel::loadSignalFromData(const QString &file_name)
 {
-    QFile file(file_name);
+    file.setFileName(file_name);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::warning(static_cast<QWidget *>(this->parent()), "Warning", "无法打开该文件!");
         return;
@@ -26,7 +26,8 @@ void SignalModel::loadSignalFromData(const QString &file_name)
     QTextStream in(&file);
     auto head_line = in.readLine();
     auto head_line_parts = head_line.split(' ', Qt::SkipEmptyParts);
-    this->sample_rate = head_line_parts[1].toDouble();
+    this->student_id = head_line_parts[0];
+    this->signal_freq = head_line_parts[1].toDouble();
 
     while (!in.atEnd()) {
         auto line = in.readLine();
@@ -37,5 +38,26 @@ void SignalModel::loadSignalFromData(const QString &file_name)
     }
 
     this->file.close();
+    emit this->signalFileLoaded(SignalFileType::LOAD_FROM_DATA);
 }
+
+void SignalModel::loadSignalFromConfig(const QString &file_name, const QString &student_id)
+{
+    file.setFileName(file_name);
+    this->search_student_id_config(student_id);
+}
+
+// Tool functions
+void SignalModel::search_student_id_config(const QString &student_id)
+{
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::warning(static_cast<QWidget *>(this->parent()), "Warning", "无法打开该文件!");
+        return;
+    }
+
+
+    this->file.close();
+    emit this->signalFileLoaded(SignalFileType::LOAD_FROM_CONFIG);
+}
+
 

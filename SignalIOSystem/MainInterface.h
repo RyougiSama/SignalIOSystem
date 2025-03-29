@@ -2,12 +2,13 @@
 
 #include <QtWidgets/QWidget>
 #include "ui_MainInterface.h"
-
+#include <qstring.h>
 #include "SignalModel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainInterfaceClass; };
 QT_END_NAMESPACE
+
 
 class MainInterface : public QWidget
 {
@@ -19,10 +20,12 @@ public:
 
 private:
     QString get_noise_discription(int noise_id);
+    void updateRawSignalDiscription(SignalModel::SignalFileType file_t);
     void updateNoiseDiscription();
 
 private slots:
     void on_pushButton_loadData_clicked();
+    void on_pushButton_loadConfig_clicked();
 
 private:
     Ui::MainInterfaceClass *ui;
