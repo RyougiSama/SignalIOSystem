@@ -32,13 +32,15 @@ public:
     ~SignalModel();
 
     void loadSignalFromData(const QString &file_name);
-    void loadSignalFromConfig(const QString &file_name, const QString &student_id);
+    void loadSignalFromConfig(const QString &file_name, const QString &target_student_id);
 
     const QString &get_student_id() const { return this->student_id; }
     double get_signal_freq() const { return this->signal_freq; }
+    qsizetype get_signal_size() const { return this->signal_raw_data.size(); }
+    const SignalConfig &get_signal_config() const { return this->signal_config; }
 
 private:
-    void search_student_id_config(const QString &student_id);
+    void search_student_id_config(const QString &target_student_id);
 
 public:
     enum SignalFileType {

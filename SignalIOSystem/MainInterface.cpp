@@ -36,12 +36,28 @@ void MainInterface::updateRawSignalDiscription(SignalModel::SignalFileType file_
         ui->textBrowser_rawSignal->setFontItalic(false);
         ui->textBrowser_rawSignal->setText(QString("当前信号加载自.dat文件 \
                                           信号来源学生学号: %1 \
-                                          信号频率: %2 Hz").arg(this->model->get_student_id())
-                                           .arg(this->model->get_signal_freq()));
+                                          采样频率: %2 Hz \
+                                          样本点总数: %3 个")
+                                           .arg(this->model->get_student_id())
+                                           .arg(this->model->get_signal_freq())
+                                           .arg(this->model->get_signal_size()));
         break;
     case SignalModel::LOAD_FROM_CONFIG:
         ui->textBrowser_rawSignal->setFontItalic(false);
-        ui->textBrowser_rawSignal->setText(QString("当前信号加载自Signal.cfg文件"));
+        ui->textBrowser_rawSignal->setText(QString("当前信号加载自Signal.cfg文件 \
+                                          信号来源学生学号: %1 \
+                                          采样频率: %2 Hz \
+                                          cfg配置信号信息如下: \
+                                          正弦频率1: %3 Hz; 初相位: %4; 幅度: %5 \
+                                          正弦频率2: %6 Hz; 初相位: %7; 幅度: %8")
+        .arg(this->model->get_student_id())
+        .arg(this->model->get_signal_config().sample_rate)
+        .arg(this->model->get_signal_config().sine1.frequency)
+        .arg(this->model->get_signal_config().sine1.phase)
+        .arg(this->model->get_signal_config().sine1.amplitude)
+        .arg(this->model->get_signal_config().sine2.frequency)
+        .arg(this->model->get_signal_config().sine2.phase)
+        .arg(this->model->get_signal_config().sine2.amplitude));
         break;
     default:
         break;
