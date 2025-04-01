@@ -6,20 +6,18 @@ MainInterface::MainInterface(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MainInterfaceClass())
     , model(new SignalModel(this))
-    , time_view(new SignalTimeDomainView(this))
 {
     ui->setupUi(this);
-
     // UI Setup
     this->updateRawSignalDiscription(SignalModel::NONE);
     this->updateNoiseDiscription();
     this->updateTimeDomainView();
-    this->time_view->set_signal_model(this->model);
+    ui->chartView_time->set_signal_model(this->model);
     // Connect Update Funtions
     QObject::connect(ui->comboBox_noise, &QComboBox::currentIndexChanged, this, &MainInterface::updateNoiseDiscription);
     QObject::connect(this->model, &SignalModel::signalFileLoaded, this, &MainInterface::updateRawSignalDiscription);
-    QObject::connect(this->time_view, &SignalTimeDomainView::chartViewUpdated, this, &MainInterface::updateTimeDomainView);
-    QObject::connect(this->model, &SignalModel::signalFileLoaded, this->time_view, &SignalTimeDomainView::loadSignalData);
+    QObject::connect(ui->chartView_time, &SignalTimeDomainView::chartViewUpdated, this, &MainInterface::updateTimeDomainView);
+    QObject::connect(this->model, &SignalModel::signalFileLoaded, ui->chartView_time, &SignalTimeDomainView::loadSignalData);
 }
 
 MainInterface::~MainInterface()

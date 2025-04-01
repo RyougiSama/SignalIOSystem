@@ -32,5 +32,4 @@ private slots:
 private:
     Ui::MainInterfaceClass *ui;
     SignalModel *model = nullptr;
-    SignalTimeDomainView *time_view = nullptr;
 };

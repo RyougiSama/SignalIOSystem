@@ -282,10 +282,10 @@
    <item row="0" column="1">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QChartView" name="chartView_freq"/>
+      <widget class="SignalTimeDomainView" name="chartView_time"/>
      </item>
      <item>
-      <widget class="SignalTimeDomainView" name="chartView_time"/>
+      <widget class="QChartView" name="chartView_freq"/>
      </item>
     </layout>
    </item>
