@@ -28,11 +28,19 @@ class SignalModel : public QObject
     Q_OBJECT
 
 public:
+    enum SignalFileType {
+        NONE = 0,
+        LOAD_FROM_DATA,
+        LOAD_FROM_CONFIG
+    };
+
+public:
     SignalModel(QObject *parent);
     ~SignalModel();
 
     void loadSignalFromData(const QString &file_name);
     void loadSignalFromConfig(const QString &file_name, const QString &target_student_id);
+    void saveSignalFromConfig(const QString &dir_name);
 
     const QString &get_student_id() const { return this->student_id; }
     double get_signal_freq() const { return this->signal_freq; }
@@ -41,13 +49,11 @@ public:
 
 private:
     void search_student_id_config(const QString &target_student_id);
+    void generate_config_signal();
 
 public:
-    enum SignalFileType {
-        NONE = 0,
-        LOAD_FROM_DATA,
-        LOAD_FROM_CONFIG
-    };
+    // Signal Flag
+    SignalFileType curr_signal_file_t = SignalFileType::NONE;
 
 private:
     // FileIO
@@ -57,8 +63,9 @@ private:
     QString student_id;
     double signal_freq = 0;
     // Signal from config
-    SignalConfig signal_config;
-
+    SignalConfig signal_config{ 0, { 0, 0, 0 }, { 0, 0, 0 } };
+    static constexpr int k_generate_samples = 2048;
+   
 signals:
     void signalFileLoaded(SignalFileType file_t);
 };

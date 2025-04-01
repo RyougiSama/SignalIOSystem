@@ -26,6 +26,7 @@ private:
 private slots:
     void on_pushButton_loadData_clicked();
     void on_pushButton_loadConfig_clicked();
+    void on_pushButton_saveCfgSignal_clicked();
 
 private:
     Ui::MainInterfaceClass *ui;

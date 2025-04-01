@@ -13,7 +13,6 @@ MainInterface::MainInterface(QWidget *parent)
     // UI Setup
     this->updateRawSignalDiscription(SignalModel::NONE);
     this->updateNoiseDiscription();
-
     // Connect Update Funtions
     QObject::connect(ui->comboBox_noise, &QComboBox::currentIndexChanged, this, &MainInterface::updateNoiseDiscription);
     QObject::connect(this->model, &SignalModel::signalFileLoaded, this, &MainInterface::updateRawSignalDiscription);
@@ -97,7 +96,7 @@ void MainInterface::on_pushButton_loadData_clicked()
 {
     auto file_name = QFileDialog::getOpenFileName(this, "Open File", ".", "Data File (*.dat);;");
     if (file_name.isEmpty()) {
-        QMessageBox::warning(this, "Warining", "请选择一个文件!");
+        QMessageBox::warning(this, "Warning", "请选择一个文件!");
         return;
     }
     model->loadSignalFromData(file_name);
@@ -107,9 +106,23 @@ void MainInterface::on_pushButton_loadConfig_clicked()
 {
     auto file_name = QFileDialog::getOpenFileName(this, "Open File", ".", "Config File (Signal.cfg);;");
     if (file_name.isEmpty()) {
-        QMessageBox::warning(this, "Warining", "请选择一个文件!");
+        QMessageBox::warning(this, "Warning", "请选择一个文件!");
         return;
     }
     model->loadSignalFromConfig(file_name, ui->lineEdit_cfgNumber->text());
+}
+
+void MainInterface::on_pushButton_saveCfgSignal_clicked()
+{
+    if (this->model->curr_signal_file_t != SignalModel::LOAD_FROM_CONFIG) {
+        QMessageBox::warning(this, "Warning", "请先加载一个cfg文件!");
+        return;
+    }
+    auto dir_name = QFileDialog::getExistingDirectory(this, "Save File", ".");
+    if (dir_name.isEmpty()) {
+        QMessageBox::warning(this, "Warning", "请选择保存目录!");
+        return;
+    }
+    this->model->saveSignalFromConfig(dir_name);
 }
 

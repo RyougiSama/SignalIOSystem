@@ -5,10 +5,10 @@
 #endif // QT_DEBUG
 
 #include <qmessagebox.h>
+#include <qmath.h>
 
 SignalModel::SignalModel(QObject *parent)
     : QObject(parent)
-    , signal_config{ 0, { 0, 0, 0 }, { 0, 0, 0 } }
 {
 
 }
@@ -31,6 +31,7 @@ void SignalModel::loadSignalFromData(const QString &file_name)
     this->student_id = head_line_parts[0];
     this->signal_freq = head_line_parts[1].toDouble();
 
+    this->signal_raw_data.clear();
     while (!in.atEnd()) {
         auto line = in.readLine().trimmed();
         auto line_parts = line.split(' ', Qt::SkipEmptyParts);
@@ -40,6 +41,7 @@ void SignalModel::loadSignalFromData(const QString &file_name)
     }
 
     this->file.close();
+    this->curr_signal_file_t = SignalFileType::LOAD_FROM_DATA;
     emit this->signalFileLoaded(SignalFileType::LOAD_FROM_DATA);
 }
 
@@ -47,6 +49,39 @@ void SignalModel::loadSignalFromConfig(const QString &file_name, const QString &
 {
     this->file.setFileName(file_name);
     this->search_student_id_config(target_student_id);
+}
+
+void SignalModel::saveSignalFromConfig(const QString &dir_name)
+{
+    auto file_name = dir_name + "/";
+
+    if (this->student_id == "2228410087") {
+        file_name = file_name + "14" + "_" + this->student_id + "姜添翼out.dat";
+    } else {
+        file_name = file_name + this->student_id + "out.dat";
+    }
+
+    this->file.setFileName(file_name);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(static_cast<QWidget *>(this->parent()), "Warning", "无法打开该文件!");
+        return;
+    }
+
+    constexpr int n_samples_per_line = 5;
+    QTextStream out(&this->file);
+    // Line 1
+    out << this->student_id << ' ' << this->signal_config.sample_rate << ' ' << n_samples_per_line << '\n';
+    for (int i = 0; i < this->signal_raw_data.size(); ++i) {
+        out << this->signal_raw_data[i];
+        if (i % n_samples_per_line == n_samples_per_line - 1) {
+            out << '\n';
+        } else {
+            out << ' ';
+        }
+    }
+
+    this->file.close();
+    QMessageBox::information(static_cast<QWidget *>(this->parent()), "Information", "保存成功!");
 }
 
 // Tool functions
@@ -88,7 +123,25 @@ void SignalModel::search_student_id_config(const QString &target_student_id)
     }
 
     this->file.close();
+    this->generate_config_signal();
+    this->curr_signal_file_t = SignalFileType::LOAD_FROM_CONFIG;
     emit this->signalFileLoaded(SignalFileType::LOAD_FROM_CONFIG);
 }
 
+void SignalModel::generate_config_signal()
+{
+    this->signal_raw_data.clear();
+    for (int i = 0; i < k_generate_samples; ++i) {
+        double t = i / this->signal_config.sample_rate;
+        auto sine1 = this->signal_config.sine1.amplitude * qSin(
+            2 * M_PI * this->signal_config.sine1.frequency * t +
+            this->signal_config.sine1.phase
+        );
+        auto sine2 = this->signal_config.sine2.amplitude * qSin(
+            2 * M_PI * this->signal_config.sine2.frequency * t +
+            this->signal_config.sine2.phase
+        );
+        this->signal_raw_data.append(sine1 + sine2);
+    }
+}
 
