@@ -13,9 +13,13 @@ MainInterface::MainInterface(QWidget *parent)
     // UI Setup
     this->updateRawSignalDiscription(SignalModel::NONE);
     this->updateNoiseDiscription();
+    this->updateTimeDomainView();
+    this->time_view->set_signal_model(this->model);
     // Connect Update Funtions
     QObject::connect(ui->comboBox_noise, &QComboBox::currentIndexChanged, this, &MainInterface::updateNoiseDiscription);
     QObject::connect(this->model, &SignalModel::signalFileLoaded, this, &MainInterface::updateRawSignalDiscription);
+    QObject::connect(this->time_view, &SignalTimeDomainView::chartViewUpdated, this, &MainInterface::updateTimeDomainView);
+    QObject::connect(this->model, &SignalModel::signalFileLoaded, this->time_view, &SignalTimeDomainView::loadSignalData);
 }
 
 MainInterface::~MainInterface()
@@ -38,7 +42,7 @@ void MainInterface::updateRawSignalDiscription(SignalModel::SignalFileType file_
                                           采样频率: %2 Hz \
                                           样本点总数: %3 个")
                                            .arg(this->model->get_student_id())
-                                           .arg(this->model->get_signal_freq())
+                                           .arg(this->model->get_signal_sample_rate())
                                            .arg(this->model->get_signal_size()));
         break;
     case SignalModel::LOAD_FROM_CONFIG:
@@ -68,6 +72,11 @@ void MainInterface::updateNoiseDiscription()
     ui->textBrowser_noiseDiscription->setText(
         this->get_noise_discription(ui->comboBox_noise->currentIndex())
     );
+}
+
+void MainInterface::updateTimeDomainView()
+{
+
 }
 
 // Tool Functions

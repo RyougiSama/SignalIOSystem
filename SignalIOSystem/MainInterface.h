@@ -22,6 +22,7 @@ private:
     QString get_noise_discription(int noise_id);
     void updateRawSignalDiscription(SignalModel::SignalFileType file_t);
     void updateNoiseDiscription();
+    void updateTimeDomainView();
 
 private slots:
     void on_pushButton_loadData_clicked();

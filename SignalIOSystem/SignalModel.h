@@ -43,7 +43,8 @@ public:
     void saveSignalFromConfig(const QString &dir_name);
 
     const QString &get_student_id() const { return this->student_id; }
-    double get_signal_freq() const { return this->signal_freq; }
+    double get_signal_sample_rate() const { return this->signal_freq; }
+    const QList<double> *get_signal_raw_data() const { return &this->signal_raw_data; }
     qsizetype get_signal_size() const { return this->signal_raw_data.size(); }
     const SignalConfig &get_signal_config() const { return this->signal_config; }
 
