@@ -60,7 +60,7 @@ private:
     // FileIO
     QFile file;
     // Signal from data
-    QList<double> signal_raw_data;
+    QList<double> signal_raw_data;// Signal from data and config share this member
     QString student_id;
     double signal_freq = 0;
     // Signal from config

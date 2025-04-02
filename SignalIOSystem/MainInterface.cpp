@@ -1,23 +1,26 @@
 ﻿#include "MainInterface.h"
 #include <qfiledialog.h>
 #include <qmessagebox.h>
+#include <qtimer.h>
 
 MainInterface::MainInterface(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MainInterfaceClass())
     , model(new SignalModel(this))
+    , timer(new QTimer(this))
 {
     ui->setupUi(this);
-    // UI Setup
+    // Setup
     this->updateRawSignalDiscription(SignalModel::NONE);
     this->updateNoiseDiscription();
-    this->updateTimeDomainView();
     ui->chartView_time->set_signal_model(this->model);
     // Connect Update Funtions
     QObject::connect(ui->comboBox_noise, &QComboBox::currentIndexChanged, this, &MainInterface::updateNoiseDiscription);
     QObject::connect(this->model, &SignalModel::signalFileLoaded, this, &MainInterface::updateRawSignalDiscription);
-    QObject::connect(ui->chartView_time, &SignalTimeDomainView::chartViewUpdated, this, &MainInterface::updateTimeDomainView);
     QObject::connect(this->model, &SignalModel::signalFileLoaded, ui->chartView_time, &SignalTimeDomainView::loadSignalData);
+    // Timer
+    QObject::connect(timer, &QTimer::timeout, ui->chartView_time, &SignalTimeDomainView::updateChartView);
+    timer->start(50);
 }
 
 MainInterface::~MainInterface()
@@ -35,30 +38,24 @@ void MainInterface::updateRawSignalDiscription(SignalModel::SignalFileType file_
         break;
     case SignalModel::LOAD_FROM_DATA:
         ui->textBrowser_rawSignal->setFontItalic(false);
-        ui->textBrowser_rawSignal->setText(QString("当前信号加载自.dat文件 \
-                                          信号来源学生学号: %1 \
-                                          采样频率: %2 Hz \
-                                          样本点总数: %3 个")
-                                           .arg(this->model->get_student_id())
-                                           .arg(this->model->get_signal_sample_rate())
-                                           .arg(this->model->get_signal_size()));
+        ui->textBrowser_rawSignal->setText(
+            QString("当前信号加载自.dat文件\n信号来源学生学号: %1\n采样频率: %2 Hz\n样本点总数: %3 个")
+            .arg(this->model->get_student_id())
+            .arg(this->model->get_signal_sample_rate())
+            .arg(this->model->get_signal_size()));
         break;
     case SignalModel::LOAD_FROM_CONFIG:
         ui->textBrowser_rawSignal->setFontItalic(false);
-        ui->textBrowser_rawSignal->setText(QString("当前信号加载自Signal.cfg文件 \
-                                          信号来源学生学号: %1 \
-                                          采样频率: %2 Hz \
-                                          cfg配置信号信息如下: \
-                                          正弦频率1: %3 Hz; 初相位: %4; 幅度: %5 \
-                                          正弦频率2: %6 Hz; 初相位: %7; 幅度: %8")
-        .arg(this->model->get_student_id())
-        .arg(this->model->get_signal_config().sample_rate)
-        .arg(this->model->get_signal_config().sine1.frequency)
-        .arg(this->model->get_signal_config().sine1.phase)
-        .arg(this->model->get_signal_config().sine1.amplitude)
-        .arg(this->model->get_signal_config().sine2.frequency)
-        .arg(this->model->get_signal_config().sine2.phase)
-        .arg(this->model->get_signal_config().sine2.amplitude));
+        ui->textBrowser_rawSignal->setText(
+            QString("当前信号加载自Signal.cfg文件\n信号来源学生学号: %1\n采样频率: %2 Hz\ncfg配置信号信息如下:\n正弦频率1: %3 Hz; 初相位: %4; 幅度: %5\n正弦频率2: %6 Hz; 初相位: %7; 幅度: %8")
+            .arg(this->model->get_student_id())
+            .arg(this->model->get_signal_config().sample_rate)
+            .arg(this->model->get_signal_config().sine1.frequency)
+            .arg(this->model->get_signal_config().sine1.phase)
+            .arg(this->model->get_signal_config().sine1.amplitude)
+            .arg(this->model->get_signal_config().sine2.frequency)
+            .arg(this->model->get_signal_config().sine2.phase)
+            .arg(this->model->get_signal_config().sine2.amplitude));
         break;
     default:
         break;
@@ -70,11 +67,6 @@ void MainInterface::updateNoiseDiscription()
     ui->textBrowser_noiseDiscription->setText(
         this->get_noise_discription(ui->comboBox_noise->currentIndex())
     );
-}
-
-void MainInterface::updateTimeDomainView()
-{
-
 }
 
 // Tool Functions
@@ -107,6 +99,7 @@ void MainInterface::on_pushButton_loadData_clicked()
         return;
     }
     model->loadSignalFromData(file_name);
+    ui->chartView_time->updateChartView();
 }
 
 void MainInterface::on_pushButton_loadConfig_clicked()
@@ -117,6 +110,7 @@ void MainInterface::on_pushButton_loadConfig_clicked()
         return;
     }
     model->loadSignalFromConfig(file_name, ui->lineEdit_cfgNumber->text());
+    ui->chartView_time->updateChartView();
 }
 
 void MainInterface::on_pushButton_saveCfgSignal_clicked()
@@ -131,5 +125,16 @@ void MainInterface::on_pushButton_saveCfgSignal_clicked()
         return;
     }
     this->model->saveSignalFromConfig(dir_name);
+}
+
+void MainInterface::on_pushButton_stopWave_clicked(bool checked)
+{
+    if (checked) {
+        ui->pushButton_stopWave->setText("启动波形");
+        this->timer->stop();
+    } else {
+        ui->pushButton_stopWave->setText("停止波形");
+        this->timer->start(50);
+    }
 }
 

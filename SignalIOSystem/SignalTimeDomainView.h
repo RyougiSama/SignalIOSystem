@@ -20,11 +20,17 @@ public:
     void loadSignalData(SignalModel::SignalFileType file_t);
 
 private:
+    void reset_axis_range();
+    void update_axis_range();
+
+private:
     const SignalModel *model = nullptr;
     const QList<double> *disp_waveform = nullptr;
     double sample_rate = 0;
-    QChart *time_chart = nullptr;
-    QLineSeries *time_disp_series = nullptr;
+    QLineSeries *disp_series = nullptr;
+    int start_idx = 0;
+    static constexpr int k_disp_range = 100;
+    static constexpr int k_disp_interval = 1;
 
 signals:
     void chartViewUpdated();
