@@ -285,7 +285,7 @@
       <widget class="SignalTimeDomainView" name="chartView_time"/>
      </item>
      <item>
-      <widget class="QChartView" name="chartView_freq"/>
+      <widget class="SignalFreqDomainView" name="chartView_freq"/>
      </item>
     </layout>
    </item>
@@ -294,14 +294,14 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QChartView</class>
-   <extends>QGraphicsView</extends>
-   <header>qchartview.h</header>
-  </customwidget>
-  <customwidget>
    <class>SignalTimeDomainView</class>
    <extends>QGraphicsView</extends>
    <header>SignalTimeDomainView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SignalFreqDomainView</class>
+   <extends>QGraphicsView</extends>
+   <header>signalfreqdomainview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

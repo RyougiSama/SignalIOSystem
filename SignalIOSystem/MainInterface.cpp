@@ -14,10 +14,12 @@ MainInterface::MainInterface(QWidget *parent)
     this->updateRawSignalDiscription(SignalModel::NONE);
     this->updateNoiseDiscription();
     ui->chartView_time->set_signal_model(this->model);
+    ui->chartView_freq->set_signal_model(this->model);
     // Connect Update Funtions
     QObject::connect(ui->comboBox_noise, &QComboBox::currentIndexChanged, this, &MainInterface::updateNoiseDiscription);
     QObject::connect(this->model, &SignalModel::signalFileLoaded, this, &MainInterface::updateRawSignalDiscription);
     QObject::connect(this->model, &SignalModel::signalFileLoaded, ui->chartView_time, &SignalTimeDomainView::loadSignalData);
+    QObject::connect(this->model, &SignalModel::signalFileLoaded, ui->chartView_freq, &SignalFreqDomainView::loadSignalData);
     // Timer
     QObject::connect(timer, &QTimer::timeout, ui->chartView_time, &SignalTimeDomainView::updateChartView);
     timer->start(50);

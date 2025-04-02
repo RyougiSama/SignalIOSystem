@@ -15,9 +15,9 @@ SignalTimeDomainView::SignalTimeDomainView(QWidget *parent)
     chart->setTitle("Time-domain Waveform");
     chart->legend()->close();
     chart->addSeries(this->disp_series);
-    // Create default axes
+    // Create axes
     auto axisX = new QValueAxis();
-    axisX->setTitleText("Time(s)");
+    axisX->setTitleText("Time (s)");
     axisX->setRange(0, 5);
     axisX->setTickCount(5);
     auto axisY = new QValueAxis();
