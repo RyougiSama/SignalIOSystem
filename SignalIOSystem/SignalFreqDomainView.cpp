@@ -92,10 +92,12 @@ void SignalFreqDomainView::disp_spectrum()
             axisY->setRange(0, 1.1 * (*std::max_element(this->magnitude.cbegin(), this->magnitude.cend())));
     }
     // Draw magnitude
-    this->disp_series->clear();
+    QList<QPointF> points(this->magnitude.size());
     for (int i = 0; i < this->magnitude.size(); ++i) {
-        this->disp_series->append(i * this->freq_resolution, magnitude[i]);
+        points[i] = QPointF(i * this->freq_resolution, this->magnitude[i]);
     }
+    this->disp_series->replace(points);
+
     this->update();
 }
 
