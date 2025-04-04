@@ -12,14 +12,18 @@ MainInterface::MainInterface(QWidget *parent)
     ui->setupUi(this);
     // Setup
     this->updateRawSignalDiscription(SignalModel::NONE);
-    this->updateNoiseDiscription();
+    ui->textBrowser_noiseDiscription->setText(
+        this->get_noise_discription(ui->comboBox_noise->currentIndex())
+    );
     ui->chartView_time->set_signal_model(this->model);
     ui->chartView_freq->set_signal_model(this->model);
     // Connect Update Funtions
-    QObject::connect(ui->comboBox_noise, &QComboBox::currentIndexChanged, this, &MainInterface::updateNoiseDiscription);
     QObject::connect(this->model, &SignalModel::signalFileLoaded, this, &MainInterface::updateRawSignalDiscription);
     QObject::connect(this->model, &SignalModel::signalFileLoaded, ui->chartView_time, &SignalTimeDomainView::loadSignalData);
     QObject::connect(this->model, &SignalModel::signalFileLoaded, ui->chartView_freq, &SignalFreqDomainView::loadSignalData);
+    QObject::connect(this, &MainInterface::changeNoiseState, this->model, &SignalModel::changeSignalNoise);
+    QObject::connect(this, &MainInterface::changeNoiseState, ui->chartView_time, &SignalTimeDomainView::changeSignalNoise);
+    QObject::connect(this, &MainInterface::changeNoiseState, ui->chartView_freq, &SignalFreqDomainView::changeSignalNoise);
     // Timer
     QObject::connect(timer, &QTimer::timeout, ui->chartView_time, &SignalTimeDomainView::updateChartView);
     timer->start(50);
@@ -33,6 +37,8 @@ MainInterface::~MainInterface()
 // Update Functons
 void MainInterface::updateRawSignalDiscription(SignalModel::SignalFileType file_t)
 {
+    ui->pushButton_addNoise->setEnabled(file_t != SignalModel::NONE);
+
     switch (file_t) {
     case SignalModel::NONE:
         ui->textBrowser_rawSignal->setFontItalic(true);
@@ -64,13 +70,6 @@ void MainInterface::updateRawSignalDiscription(SignalModel::SignalFileType file_
     }
 }
 
-void MainInterface::updateNoiseDiscription()
-{
-    ui->textBrowser_noiseDiscription->setText(
-        this->get_noise_discription(ui->comboBox_noise->currentIndex())
-    );
-}
-
 // Tool Functions
 QString MainInterface::get_noise_discription(int noise_id)
 {
@@ -82,8 +81,10 @@ QString MainInterface::get_noise_discription(int noise_id)
         ui->textBrowser_noiseDiscription->setFontItalic(true);
         break;
     case 1:
-        tmp = "高斯噪声: ";
-        ui->textBrowser_noiseDiscription->setFontItalic(true);
+        tmp = QString("高斯噪声: \n均值: %1\n标准差: %2")
+            .arg(this->model->get_guassian_config().noise_mean)
+            .arg(this->model->get_guassian_config().noise_stddev);
+        ui->textBrowser_noiseDiscription->setFontItalic(false);
         break;
     default:
         break;
@@ -137,6 +138,41 @@ void MainInterface::on_pushButton_stopWave_clicked(bool checked)
     } else {
         ui->pushButton_stopWave->setText("停止波形");
         this->timer->start(50);
+    }
+}
+
+void MainInterface::on_comboBox_noise_currentIndexChanged(int index)
+{
+    ui->textBrowser_noiseDiscription->setText(
+        this->get_noise_discription(ui->comboBox_noise->currentIndex())
+    );
+
+    switch (index) {
+    case 0:
+        this->noise_t = NoiseGenerator::NONE;
+        break;
+    case 1:
+        this->noise_t = NoiseGenerator::GAUSSIAN;
+        break;
+    default:
+        break;
+    }
+}
+
+void MainInterface::on_pushButton_addNoise_clicked(bool checked)
+{
+    if (checked) {
+        ui->pushButton_addNoise->setText("去除噪声");
+        ui->comboBox_noise->setEnabled(false);
+        ui->pushButton_loadData->setEnabled(false);
+        ui->pushButton_loadConfig->setEnabled(false);
+        emit this->changeNoiseState(this->noise_t);
+    } else {
+        ui->pushButton_addNoise->setText("加入噪声");
+        ui->comboBox_noise->setEnabled(true);
+        ui->pushButton_loadData->setEnabled(true);
+        ui->pushButton_loadConfig->setEnabled(true);
+        emit this->changeNoiseState(NoiseGenerator::NONE);
     }
 }
 

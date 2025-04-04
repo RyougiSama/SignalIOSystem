@@ -1,14 +1,11 @@
 ﻿#include "SignalModel.h"
 
-#ifdef QT_DEBUG
-#include <qdebug.h>
-#endif // QT_DEBUG
-
 #include <qmessagebox.h>
 #include <qmath.h>
 
 SignalModel::SignalModel(QObject *parent)
     : QObject(parent)
+    , noise_gen(new NoiseGenerator(this))
 {
 
 }
@@ -82,6 +79,19 @@ void SignalModel::saveSignalFromConfig(const QString &dir_name)
 
     this->file.close();
     QMessageBox::information(static_cast<QWidget *>(this->parent()), "Information", "保存成功!");
+}
+
+void SignalModel::changeSignalNoise(NoiseGenerator::NoiseType noise_t)
+{
+    switch (noise_t) {
+    case NoiseGenerator::NONE:
+        break;
+    case NoiseGenerator::GAUSSIAN:
+        this->signal_noisy_data = this->noise_gen->generateGaussinNoise(this->signal_raw_data, this->guassian_noise.noise_mean, this->guassian_noise.noise_stddev);
+        break;
+    default:
+        break;
+    }
 }
 
 // Tool functions

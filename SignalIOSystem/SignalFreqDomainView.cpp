@@ -45,12 +45,28 @@ void SignalFreqDomainView::loadSignalData(SignalModel::SignalFileType file_t)
         break;
     case SignalModel::LOAD_FROM_DATA:
         this->sample_rate = this->model->get_signal_sample_rate();
-        this->compute_spectrum();
+        this->compute_spectrum(this->model->get_signal_raw_data());
         this->disp_spectrum();
         break;
     case SignalModel::LOAD_FROM_CONFIG:
         this->sample_rate = this->model->get_signal_config().sample_rate;
-        this->compute_spectrum();
+        this->compute_spectrum(this->model->get_signal_raw_data());
+        this->disp_spectrum();
+        break;
+    default:
+        break;
+    }
+}
+
+void SignalFreqDomainView::changeSignalNoise(NoiseGenerator::NoiseType noise_t)
+{
+    switch (noise_t) {
+    case NoiseGenerator::NONE:
+        this->compute_spectrum(this->model->get_signal_raw_data());
+        this->disp_spectrum();
+        break;
+    case NoiseGenerator::GAUSSIAN:
+        this->compute_spectrum(this->model->get_signal_noisy_data());
         this->disp_spectrum();
         break;
     default:
@@ -59,9 +75,9 @@ void SignalFreqDomainView::loadSignalData(SignalModel::SignalFileType file_t)
 }
 
 // Tool functions
-void SignalFreqDomainView::compute_spectrum()
+void SignalFreqDomainView::compute_spectrum(const QList<double> *p_signal)
 {
-    const auto &raw_data = *this->model->get_signal_raw_data();
+    const auto &raw_data = *p_signal;
     auto N = raw_data.size();
     this->freq_resolution = this->sample_rate / N;
     auto complex_data = zero_padding(raw_data);

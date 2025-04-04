@@ -6,6 +6,7 @@
 #include <qlineseries.h>
 #include <qlist.h>
 #include "SignalModel.h"
+#include "NoiseGenerator.h"
 
 class SignalTimeDomainView : public QChartView
 {
@@ -18,6 +19,7 @@ public:
     void set_signal_model(const SignalModel *model) { this->model = model; }
     void updateChartView();
     void loadSignalData(SignalModel::SignalFileType file_t);
+    void changeSignalNoise(NoiseGenerator::NoiseType noise_t);
 
 private:
     void reset_axis_range();

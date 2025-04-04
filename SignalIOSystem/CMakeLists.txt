@@ -27,6 +27,8 @@ set(PROJECT_SOURCES
     SignalTimeDomainView.cpp
     SignalFreqDomainView.h
     SignalFreqDomainView.cpp
+    NoiseGenerator.h
+    NoiseGenerator.cpp
 )
 
 qt_add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})

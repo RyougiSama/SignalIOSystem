@@ -61,6 +61,22 @@ void SignalTimeDomainView::loadSignalData(SignalModel::SignalFileType file_t)
     }
 }
 
+void SignalTimeDomainView::changeSignalNoise(NoiseGenerator::NoiseType noise_t)
+{
+    switch (noise_t) {
+    case NoiseGenerator::NONE:
+        this->disp_waveform = this->model->get_signal_raw_data();
+        this->reset_axis_range();
+        break;
+    case NoiseGenerator::GAUSSIAN:
+        this->disp_waveform = this->model->get_signal_noisy_data();
+        this->reset_axis_range();
+        break;
+    default:
+        break;
+    }
+}
+
 // Tool function
 void SignalTimeDomainView::reset_axis_range()
 {
