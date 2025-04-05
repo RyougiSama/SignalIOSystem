@@ -30,6 +30,7 @@ private slots:
     void on_pushButton_stopWave_clicked(bool checked);
     void on_comboBox_noise_currentIndexChanged(int index);
     void on_pushButton_addNoise_clicked(bool checked);
+    void on_pushButton_autoFilter_clicked(bool checked);
 
 private:
     Ui::MainInterfaceClass *ui;
@@ -39,4 +40,7 @@ private:
 
 signals:
     void changeNoiseState(NoiseGenerator::NoiseType noise_t);
+
+signals:
+    void autoFilterState(bool is_open);
 };

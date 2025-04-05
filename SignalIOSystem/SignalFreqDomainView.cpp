@@ -74,6 +74,18 @@ void SignalFreqDomainView::changeSignalNoise(NoiseGenerator::NoiseType noise_t)
     }
 }
 
+void SignalFreqDomainView::changeSignalFiltered(bool is_open)
+{
+    if (is_open) {
+        this->compute_spectrum(this->model->get_signal_filtered_data());
+        this->disp_spectrum();
+    } else {
+        this->compute_spectrum(this->model->get_signal_raw_data());
+        this->disp_spectrum();
+    }
+
+}
+
 // Tool functions
 void SignalFreqDomainView::compute_spectrum(const QList<double> *p_signal)
 {

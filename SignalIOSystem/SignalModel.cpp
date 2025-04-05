@@ -94,6 +94,23 @@ void SignalModel::changeSignalNoise(NoiseGenerator::NoiseType noise_t)
     }
 }
 
+void SignalModel::autoConfigSingalFiltered(bool is_open)
+{
+    if (is_open) {
+        this->signal_filtered_data.clear();
+        for (int i = 0; i < k_generate_samples; ++i) {
+            double t = i / this->signal_config.sample_rate;
+            auto sine1 = this->signal_config.sine1.amplitude * qSin(
+                2 * M_PI * this->signal_config.sine1.frequency * t +
+                this->signal_config.sine1.phase
+            );
+            this->signal_filtered_data.append(sine1);
+        }
+    } else {
+
+    }
+}
+
 // Tool functions
 void SignalModel::search_student_id_config(const QString &target_student_id)
 {

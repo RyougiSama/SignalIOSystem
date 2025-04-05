@@ -24,6 +24,9 @@ MainInterface::MainInterface(QWidget *parent)
     QObject::connect(this, &MainInterface::changeNoiseState, this->model, &SignalModel::changeSignalNoise);
     QObject::connect(this, &MainInterface::changeNoiseState, ui->chartView_time, &SignalTimeDomainView::changeSignalNoise);
     QObject::connect(this, &MainInterface::changeNoiseState, ui->chartView_freq, &SignalFreqDomainView::changeSignalNoise);
+    QObject::connect(this, &MainInterface::autoFilterState, this->model, &SignalModel::autoConfigSingalFiltered);
+    QObject::connect(this, &MainInterface::autoFilterState, ui->chartView_time, &SignalTimeDomainView::changeSignalFiltered);
+    QObject::connect(this, &MainInterface::autoFilterState, ui->chartView_freq, &SignalFreqDomainView::changeSignalFiltered);
     // Timer
     QObject::connect(timer, &QTimer::timeout, ui->chartView_time, &SignalTimeDomainView::updateChartView);
     timer->start(50);
@@ -38,6 +41,7 @@ MainInterface::~MainInterface()
 void MainInterface::updateRawSignalDiscription(SignalModel::SignalFileType file_t)
 {
     ui->pushButton_addNoise->setEnabled(file_t != SignalModel::NONE);
+    ui->pushButton_autoFilter->setEnabled(file_t == SignalModel::LOAD_FROM_CONFIG);
 
     switch (file_t) {
     case SignalModel::NONE:
@@ -173,6 +177,17 @@ void MainInterface::on_pushButton_addNoise_clicked(bool checked)
         ui->pushButton_loadData->setEnabled(true);
         ui->pushButton_loadConfig->setEnabled(true);
         emit this->changeNoiseState(NoiseGenerator::NONE);
+    }
+}
+
+void MainInterface::on_pushButton_autoFilter_clicked(bool checked)
+{
+    if (checked) {
+        ui->pushButton_autoFilter->setText("关闭cfg滤波");
+        emit this->autoFilterState(true);
+    } else {
+        ui->pushButton_autoFilter->setText("自动cfg滤波");
+        emit this->autoFilterState(false);
     }
 }
 

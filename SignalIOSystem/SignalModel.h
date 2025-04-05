@@ -46,11 +46,13 @@ public:
     void loadSignalFromConfig(const QString &file_name, const QString &target_student_id);
     void saveSignalFromConfig(const QString &dir_name);
     void changeSignalNoise(NoiseGenerator::NoiseType noise_t);
+    void autoConfigSingalFiltered(bool is_open);
 
     const QString &get_student_id() const { return this->student_id; }
     double get_signal_sample_rate() const { return this->signal_freq; }
     const QList<double> *get_signal_raw_data() const { return &this->signal_raw_data; }
     const QList<double> *get_signal_noisy_data() const { return &this->signal_noisy_data; }
+    const QList<double> *get_signal_filtered_data() const { return &this->signal_filtered_data; }
     qsizetype get_signal_size() const { return this->signal_raw_data.size(); }
     const SignalConfig &get_signal_config() const { return this->signal_config; }
     const GuassianNoiseConfig &get_guassian_config() const { return this->guassian_noise; }
@@ -69,6 +71,7 @@ private:
     // Signal from data and config share these members
     QList<double> signal_raw_data;
     QList<double> signal_noisy_data;
+    QList<double> signal_filtered_data;
     // Signal from data
     QString student_id;
     double signal_freq = 0;

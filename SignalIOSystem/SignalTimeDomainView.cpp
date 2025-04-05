@@ -49,12 +49,14 @@ void SignalTimeDomainView::loadSignalData(SignalModel::SignalFileType file_t)
         this->disp_waveform = this->model->get_signal_raw_data();
         this->reset_axis_range();
         this->start_idx = 0;
+        this->disp_signal_t = RAW_SIGNAL;
         break;
     case SignalModel::LOAD_FROM_CONFIG:
         this->sample_rate = this->model->get_signal_config().sample_rate;
         this->disp_waveform = this->model->get_signal_raw_data();
         this->reset_axis_range();
         this->start_idx = 0;
+        this->disp_signal_t = RAW_SIGNAL;
         break;
     default:
         break;
@@ -67,13 +69,29 @@ void SignalTimeDomainView::changeSignalNoise(NoiseGenerator::NoiseType noise_t)
     case NoiseGenerator::NONE:
         this->disp_waveform = this->model->get_signal_raw_data();
         this->reset_axis_range();
+        this->disp_signal_t = RAW_SIGNAL;
         break;
     case NoiseGenerator::GAUSSIAN:
         this->disp_waveform = this->model->get_signal_noisy_data();
         this->reset_axis_range();
+        this->disp_signal_t = NOISY_SIGNAL;
         break;
     default:
         break;
+    }
+}
+
+void SignalTimeDomainView::changeSignalFiltered(bool is_open)
+{
+    static auto prev_signal_t = this->disp_signal_t;
+
+    if (is_open) {
+        this->disp_waveform_filtered = this->model->get_signal_filtered_data();
+        this->disp_signal_t = FILTERED_SIGNAL;
+        this->filter_trigger = true;
+    } else {
+        this->disp_signal_t = prev_signal_t;
+        this->filter_trigger = false;
     }
 }
 
@@ -126,16 +144,58 @@ void SignalTimeDomainView::updateChartView()
 {
     if (this->model->curr_signal_file_t == SignalModel::NONE) return;
 
+    auto get_curr_disp_wave = [this](DispSignalType disp_t) {
+        switch (disp_t) {
+        case SignalTimeDomainView::RAW_SIGNAL:
+            return *this->disp_waveform;
+            break;
+        case SignalTimeDomainView::NOISY_SIGNAL:
+            return *this->disp_waveform;
+            break;
+        case SignalTimeDomainView::FILTERED_SIGNAL:
+            return *this->disp_waveform_filtered;
+            break;
+        }
+        };
+
+    const auto tmp_disp = get_curr_disp_wave(this->disp_signal_t);
     this->update_axis_range();
-    this->disp_series->clear();
     const auto time_range = k_disp_range / this->sample_rate;
-    const auto waveform_size = this->disp_waveform->size();
+    const auto waveform_size = tmp_disp.size();
+
+    if (this->filter_trigger) {
+        static int substitute_idx = 0;
+        if (++substitute_idx >= k_disp_range) {
+            substitute_idx = 0;
+            filter_trigger = false;
+        }
+        QList<QPointF> points(k_disp_range);
+        // Raw signal
+        for (int i = 0; i < k_disp_range - substitute_idx; ++i) {
+            const auto t = (this->start_idx + i) / this->sample_rate;
+            const auto idx = (this->start_idx + i) % k_disp_range;
+            points[i] = QPointF(t, this->disp_waveform->at(idx));
+        }
+        // Filtered signal
+        for (int i = k_disp_range - substitute_idx; i < k_disp_range; ++i) {
+            const auto t = (this->start_idx + i) / this->sample_rate;
+            const auto idx = (this->start_idx + i) % k_disp_range;
+            points[i] = QPointF(t, tmp_disp.at(idx));
+        }
+        this->start_idx = (this->start_idx + k_disp_interval) % waveform_size;
+        this->disp_series->replace(points);
+        this->update();
+        return;
+    }
+
+    QList<QPointF> points(k_disp_range);
     for (int i = 0; i < k_disp_range; ++i) {
         const auto t = (this->start_idx + i) / this->sample_rate;
         const auto idx = (this->start_idx + i) % k_disp_range;
-        this->disp_series->append(t, this->disp_waveform->at(idx));
+        points[i] = QPointF(t, tmp_disp.at(idx));
     }
     this->start_idx = (this->start_idx + k_disp_interval) % waveform_size;
+    this->disp_series->replace(points);
     this->update();
 }
 

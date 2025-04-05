@@ -22,6 +22,7 @@ public:
     void set_signal_model(const SignalModel *model) { this->model = model; }
     void loadSignalData(SignalModel::SignalFileType file_t);
     void changeSignalNoise(NoiseGenerator::NoiseType noise_t);
+    void changeSignalFiltered(bool is_open);
 
 private:
     void compute_spectrum(const QList<double> *p_signal);
