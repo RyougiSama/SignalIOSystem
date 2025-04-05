@@ -170,12 +170,14 @@ void MainInterface::on_pushButton_addNoise_clicked(bool checked)
         ui->comboBox_noise->setEnabled(false);
         ui->pushButton_loadData->setEnabled(false);
         ui->pushButton_loadConfig->setEnabled(false);
+        ui->pushButton_autoFilter->setEnabled(false);
         emit this->changeNoiseState(this->noise_t);
     } else {
         ui->pushButton_addNoise->setText("加入噪声");
         ui->comboBox_noise->setEnabled(true);
         ui->pushButton_loadData->setEnabled(true);
         ui->pushButton_loadConfig->setEnabled(true);
+        ui->pushButton_autoFilter->setEnabled(true);
         emit this->changeNoiseState(NoiseGenerator::NONE);
     }
 }
@@ -184,9 +186,11 @@ void MainInterface::on_pushButton_autoFilter_clicked(bool checked)
 {
     if (checked) {
         ui->pushButton_autoFilter->setText("关闭cfg滤波");
+        ui->pushButton_addNoise->setEnabled(false);
         emit this->autoFilterState(true);
     } else {
         ui->pushButton_autoFilter->setText("自动cfg滤波");
+        ui->pushButton_addNoise->setEnabled(true);
         emit this->autoFilterState(false);
     }
 }
