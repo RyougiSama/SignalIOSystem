@@ -57,6 +57,8 @@ public:
     const SignalConfig &get_signal_config() const { return this->signal_config; }
     const GuassianNoiseConfig &get_guassian_config() const { return this->guassian_noise; }
 
+    void set_guassian_config(double mean, double stddev) { this->guassian_noise.noise_mean = mean; this->guassian_noise.noise_stddev = stddev; }
+
 private:
     void search_student_id_config(const QString &target_student_id);
     void generate_config_signal();

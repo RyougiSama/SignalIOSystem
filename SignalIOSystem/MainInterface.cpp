@@ -116,7 +116,7 @@ void MainInterface::on_pushButton_loadConfig_clicked()
         QMessageBox::warning(this, "Warning", "请选择一个文件!");
         return;
     }
-    model->loadSignalFromConfig(file_name, ui->lineEdit_cfgNumber->text());
+    model->loadSignalFromConfig(file_name, "14_2228410087");
     ui->chartView_time->updateChartView();
 }
 
@@ -171,6 +171,14 @@ void MainInterface::on_pushButton_addNoise_clicked(bool checked)
         ui->pushButton_loadData->setEnabled(false);
         ui->pushButton_loadConfig->setEnabled(false);
         ui->pushButton_autoFilter->setEnabled(false);
+        ui->lineEdit_noiseMean->setEnabled(false);
+        ui->lineEdit_noiseStddev->setEnabled(false);
+        auto mean = ui->lineEdit_noiseMean->text().toDouble();
+        auto stddev = ui->lineEdit_noiseStddev->text().toDouble();
+        this->model->set_guassian_config(mean, stddev);
+        ui->textBrowser_noiseDiscription->setText(
+            this->get_noise_discription(ui->comboBox_noise->currentIndex())
+        );
         emit this->changeNoiseState(this->noise_t);
     } else {
         ui->pushButton_addNoise->setText("加入噪声");
@@ -178,6 +186,8 @@ void MainInterface::on_pushButton_addNoise_clicked(bool checked)
         ui->pushButton_loadData->setEnabled(true);
         ui->pushButton_loadConfig->setEnabled(true);
         ui->pushButton_autoFilter->setEnabled(true);
+        ui->lineEdit_noiseMean->setEnabled(true);
+        ui->lineEdit_noiseStddev->setEnabled(true);
         emit this->changeNoiseState(NoiseGenerator::NONE);
     }
 }
