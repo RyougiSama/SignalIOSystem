@@ -43,7 +43,7 @@ private:
     DispSignalType disp_signal_t = NONE;
     QLineSeries *disp_series = nullptr;
     int start_idx = 0;
-    static constexpr int k_disp_range = 100;
+    static constexpr int k_disp_range = 91;
     static constexpr int k_disp_interval = 1;
 
 signals:
