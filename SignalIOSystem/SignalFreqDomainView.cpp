@@ -1,6 +1,7 @@
 ﻿#include "SignalFreqDomainView.h"
 #include <qvalueaxis.h>
 #include <qmath.h>
+#include "SignalFilter.h"
 
 SignalFreqDomainView::SignalFreqDomainView(QWidget *parent)
     : QChartView(parent)
@@ -93,7 +94,7 @@ void SignalFreqDomainView::compute_spectrum(const QList<double> *p_signal)
     auto N = raw_data.size();
     this->freq_resolution = this->sample_rate / N;
     auto complex_data = zero_padding(raw_data);
-    this->fft(complex_data);
+    SignalFilter::fft(complex_data);
     this->magnitude.clear();
     for (int i = 0; i < N / 2 + 1; ++i) {
         this->magnitude.append(std::abs(complex_data[i]));
@@ -140,26 +141,5 @@ QList<SignalFreqDomainView::Complex> SignalFreqDomainView::zero_padding(const QL
         zero_padded_complex_data[i] = Complex((i < raw_data.size() ? raw_data[i] : 0), 0);
     }
     return zero_padded_complex_data;
-}
-
-void SignalFreqDomainView::fft(QList<SignalFreqDomainView::Complex> &complex_data)
-{
-    auto N = complex_data.size();
-    if (N <= 1) return;
-
-    QList<Complex> even(N / 2), odd(N / 2);
-    for (int i = 0; i < N / 2; ++i) {
-        even[i] = complex_data[i * 2];
-        odd[i] = complex_data[i * 2 + 1];
-    }
-
-    fft(even);
-    fft(odd);
-
-    for (int k = 0; k < N / 2; ++k) {
-        Complex t = std::polar(1.0, -2 * M_PI * k / N) * odd[k];
-        complex_data[k] = even[k] + t;
-        complex_data[k + N / 2] = even[k] - t;
-    }
 }
 

@@ -31,7 +31,7 @@ private slots:
     void on_comboBox_noise_currentIndexChanged(int index);
     void on_pushButton_addNoise_clicked(bool checked);
     void on_pushButton_autoFilter_clicked(bool checked);
-
+    void on_pushButton_filterSwitch_clicked(bool checked);
 
 private:
     Ui::MainInterfaceClass *ui;
@@ -44,4 +44,7 @@ signals:
 
 signals:
     void autoFilterState(bool is_open);
+
+signals:
+    void customizedSignalFiltered(bool is_open);
 };

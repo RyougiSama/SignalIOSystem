@@ -30,7 +30,6 @@ MainInterface::MainInterface(QWidget *parent)
     freq_limit_validator->setNotation(QDoubleValidator::StandardNotation);
     ui->lineEdit_maxFreq->setValidator(freq_limit_validator);
     ui->lineEdit_minFreq->setValidator(freq_limit_validator);
-
     // Connect Update Funtions
     QObject::connect(this->model, &SignalModel::signalFileLoaded, this, &MainInterface::updateRawSignalDiscription);
     QObject::connect(this->model, &SignalModel::signalFileLoaded, ui->chartView_time, &SignalTimeDomainView::loadSignalData);
@@ -56,6 +55,7 @@ void MainInterface::updateRawSignalDiscription(SignalModel::SignalFileType file_
 {
     ui->pushButton_addNoise->setEnabled(file_t != SignalModel::NONE);
     ui->pushButton_autoFilter->setEnabled(file_t == SignalModel::LOAD_FROM_CONFIG);
+    ui->pushButton_filterSwitch->setEnabled(true);
 
     switch (file_t) {
     case SignalModel::NONE:
@@ -216,6 +216,40 @@ void MainInterface::on_pushButton_autoFilter_clicked(bool checked)
         ui->pushButton_autoFilter->setText("自动cfg滤波");
         ui->pushButton_addNoise->setEnabled(true);
         emit this->autoFilterState(false);
+    }
+}
+
+void MainInterface::on_pushButton_filterSwitch_clicked(bool checked)
+{
+    if (checked) {
+        auto min_freq_text = ui->lineEdit_minFreq->text();
+        auto max_freq_text = ui->lineEdit_maxFreq->text();
+
+        if (min_freq_text.isEmpty() || max_freq_text.isEmpty()) {
+            QMessageBox::warning(this, "Warning", "请先输入滤波器频率范围!");
+            ui->pushButton_filterSwitch->setChecked(false);
+            return;
+        }
+
+        auto min_freq = min_freq_text.toDouble();
+        auto max_freq = max_freq_text.toDouble();
+        if (max_freq <= min_freq) {
+            QMessageBox::warning(this, "Waring", "请确保最大频率大于最小频率!");
+            ui->pushButton_filterSwitch->setChecked(false);
+            return;
+        }
+
+        ui->pushButton_filterSwitch->setText("关闭滤波");
+        ui->lineEdit_minFreq->setEnabled(false);
+        ui->lineEdit_maxFreq->setEnabled(false);
+
+        emit this->customizedSignalFiltered(true);
+    } else {
+        ui->pushButton_filterSwitch->setText("开启滤波");
+        ui->lineEdit_minFreq->setEnabled(true);
+        ui->lineEdit_maxFreq->setEnabled(true);
+
+        emit this->customizedSignalFiltered(false);
     }
 }
 
