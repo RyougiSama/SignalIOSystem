@@ -67,6 +67,10 @@ public:
     // Signal Flag
     SignalFileType curr_signal_file_t = SignalFileType::NONE;
 
+public:
+    static constexpr double k_max_freq = 10000;
+    static constexpr double k_min_freq = 0;
+
 private:
     // FileIO
     QFile file;

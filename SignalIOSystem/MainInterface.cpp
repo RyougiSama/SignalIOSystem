@@ -2,6 +2,7 @@
 #include <qfiledialog.h>
 #include <qmessagebox.h>
 #include <qtimer.h>
+#include <qvalidator.h>
 
 MainInterface::MainInterface(QWidget *parent)
     : QWidget(parent)
@@ -17,6 +18,19 @@ MainInterface::MainInterface(QWidget *parent)
     );
     ui->chartView_time->set_signal_model(this->model);
     ui->chartView_freq->set_signal_model(this->model);
+
+    auto mean_validator = new QDoubleValidator(0, 9999, 2, this);
+    mean_validator->setNotation(QDoubleValidator::StandardNotation);
+    ui->lineEdit_noiseMean->setValidator(mean_validator);
+    auto stddev_validator = new QDoubleValidator(0, 999, 2, this);
+    stddev_validator->setNotation(QDoubleValidator::StandardNotation);
+    ui->lineEdit_noiseStddev->setValidator(stddev_validator);
+
+    auto freq_limit_validator = new QDoubleValidator(SignalModel::k_min_freq, SignalModel::k_max_freq, 2, this);
+    freq_limit_validator->setNotation(QDoubleValidator::StandardNotation);
+    ui->lineEdit_maxFreq->setValidator(freq_limit_validator);
+    ui->lineEdit_minFreq->setValidator(freq_limit_validator);
+
     // Connect Update Funtions
     QObject::connect(this->model, &SignalModel::signalFileLoaded, this, &MainInterface::updateRawSignalDiscription);
     QObject::connect(this->model, &SignalModel::signalFileLoaded, ui->chartView_time, &SignalTimeDomainView::loadSignalData);

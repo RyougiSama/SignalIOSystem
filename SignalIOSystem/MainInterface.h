@@ -32,6 +32,7 @@ private slots:
     void on_pushButton_addNoise_clicked(bool checked);
     void on_pushButton_autoFilter_clicked(bool checked);
 
+
 private:
     Ui::MainInterfaceClass *ui;
     SignalModel *model = nullptr;

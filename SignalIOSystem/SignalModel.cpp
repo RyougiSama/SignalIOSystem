@@ -106,8 +106,6 @@ void SignalModel::autoConfigSingalFiltered(bool is_open)
             );
             this->signal_filtered_data.append(sine1);
         }
-    } else {
-
     }
 }
 
