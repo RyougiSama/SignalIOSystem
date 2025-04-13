@@ -30,3 +30,33 @@ void SignalFilter::fft(QList<Complex> &complex_data)
     }
 }
 
+QList<double> SignalFilter::idft(const QList<Complex> &freq_data)
+{
+    auto N = freq_data.size();
+    QList<double> time_data(N, 0.0);
+
+    for (int n = 0; n < N; ++n) {
+        Complex sum(0.0, 0.0);
+        for (int k = 0; k < N; ++k) {
+            double angle = 2 * M_PI * n * k / N;
+            sum += freq_data[k] * std::polar(1.0, angle);
+        }
+        time_data[n] = sum.real() / N;
+    }
+    return time_data;
+}
+
+void SignalFilter::bandpass_filter(QList<Complex> &freq_data, double f_low, double f_high, double f_s)
+{
+    auto N = freq_data.size();
+    for (auto k = 0; k <= N / 2; ++k) {
+        double f_k = k * f_s / N;
+        if (f_k < f_low || f_k > f_high) {
+            freq_data[k] = Complex(0.0, 0.0);
+            if (k > 0 && k < N / 2) {
+                freq_data[N - k] = Complex(0.0, 0.0);
+            }
+        }
+    }
+}
+

@@ -84,7 +84,6 @@ void SignalFreqDomainView::changeSignalFiltered(bool is_open)
         this->compute_spectrum(this->model->get_signal_raw_data());
         this->disp_spectrum();
     }
-
 }
 
 // Tool functions
