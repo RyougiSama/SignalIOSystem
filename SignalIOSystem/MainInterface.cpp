@@ -214,10 +214,12 @@ void MainInterface::on_pushButton_autoFilter_clicked(bool checked)
     if (checked) {
         ui->pushButton_autoFilter->setText("关闭cfg滤波");
         ui->pushButton_addNoise->setEnabled(false);
+        ui->pushButton_filterSwitch->setEnabled(false);
         emit this->autoFilterState(true);
     } else {
         ui->pushButton_autoFilter->setText("自动cfg滤波");
         ui->pushButton_addNoise->setEnabled(true);
+        ui->pushButton_filterSwitch->setEnabled(true);
         emit this->autoFilterState(false);
     }
 }
@@ -245,12 +247,16 @@ void MainInterface::on_pushButton_filterSwitch_clicked(bool checked)
         ui->pushButton_filterSwitch->setText("关闭BPF");
         ui->lineEdit_minFreq->setEnabled(false);
         ui->lineEdit_maxFreq->setEnabled(false);
+        ui->pushButton_addNoise->setEnabled(false);
+        ui->pushButton_autoFilter->setEnabled(false);
 
         emit this->customizedFilterstate(true, min_freq, max_freq);
     } else {
         ui->pushButton_filterSwitch->setText("开启BPF");
         ui->lineEdit_minFreq->setEnabled(true);
         ui->lineEdit_maxFreq->setEnabled(true);
+        ui->pushButton_addNoise->setEnabled(true);
+        ui->pushButton_autoFilter->setEnabled(true);
 
         emit this->customizedFilterstate(false);
     }
