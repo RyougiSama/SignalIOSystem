@@ -40,6 +40,9 @@ MainInterface::MainInterface(QWidget *parent)
     QObject::connect(this, &MainInterface::autoFilterState, this->model, &SignalModel::autoConfigSingalFiltered);
     QObject::connect(this, &MainInterface::autoFilterState, ui->chartView_time, &SignalTimeDomainView::changeSignalFiltered);
     QObject::connect(this, &MainInterface::autoFilterState, ui->chartView_freq, &SignalFreqDomainView::changeSignalFiltered);
+    QObject::connect(this, &MainInterface::customizedFilterstate, this->model, &SignalModel::customizedSignalFiltered);
+    QObject::connect(this, &MainInterface::customizedFilterstate, ui->chartView_time, &SignalTimeDomainView::changeSignalFiltered);
+    QObject::connect(this, &MainInterface::customizedFilterstate, ui->chartView_freq, &SignalFreqDomainView::changeSignalFiltered);
     // Timer
     QObject::connect(timer, &QTimer::timeout, ui->chartView_time, &SignalTimeDomainView::updateChartView);
     timer->start(50);
@@ -55,7 +58,7 @@ void MainInterface::updateRawSignalDiscription(SignalModel::SignalFileType file_
 {
     ui->pushButton_addNoise->setEnabled(file_t != SignalModel::NONE);
     ui->pushButton_autoFilter->setEnabled(file_t == SignalModel::LOAD_FROM_CONFIG);
-    ui->pushButton_filterSwitch->setEnabled(true);
+    ui->pushButton_filterSwitch->setEnabled(file_t != SignalModel::NONE);
 
     switch (file_t) {
     case SignalModel::NONE:
@@ -239,17 +242,17 @@ void MainInterface::on_pushButton_filterSwitch_clicked(bool checked)
             return;
         }
 
-        ui->pushButton_filterSwitch->setText("关闭滤波");
+        ui->pushButton_filterSwitch->setText("关闭BPF");
         ui->lineEdit_minFreq->setEnabled(false);
         ui->lineEdit_maxFreq->setEnabled(false);
 
-        emit this->customizedSignalFiltered(true);
+        emit this->customizedFilterstate(true, min_freq, max_freq);
     } else {
-        ui->pushButton_filterSwitch->setText("开启滤波");
+        ui->pushButton_filterSwitch->setText("开启BPF");
         ui->lineEdit_minFreq->setEnabled(true);
         ui->lineEdit_maxFreq->setEnabled(true);
 
-        emit this->customizedSignalFiltered(false);
+        emit this->customizedFilterstate(false);
     }
 }
 

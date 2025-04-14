@@ -27,7 +27,6 @@ public:
 private:
     void compute_spectrum(const QList<double> *p_signal);
     void disp_spectrum();
-    QList<Complex> zero_padding(const QList<double> &raw_data);
 
 private:
     const SignalModel *model = nullptr;

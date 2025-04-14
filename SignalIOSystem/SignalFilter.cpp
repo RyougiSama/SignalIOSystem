@@ -9,6 +9,19 @@ SignalFilter::~SignalFilter()
 {
 }
 
+QList<SignalFilter::Complex> SignalFilter::zero_padding(const QList<double> &raw_data)
+{
+    int padded_size{ 1 };
+    while (padded_size < raw_data.size()) {
+        padded_size *= 2;
+    }
+    QList<Complex> zero_padded_complex_data(padded_size);
+    for (int i = 0; i < padded_size; ++i) {
+        zero_padded_complex_data[i] = Complex((i < raw_data.size() ? raw_data[i] : 0), 0);
+    }
+    return zero_padded_complex_data;
+}
+
 void SignalFilter::fft(QList<Complex> &complex_data)
 {
     auto N = complex_data.size();

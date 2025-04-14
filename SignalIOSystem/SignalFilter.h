@@ -14,6 +14,8 @@ public:
 public:
     SignalFilter(QObject *parent);
     ~SignalFilter();
+    // zero padding
+    static QList<Complex> zero_padding(const QList <double> &raw_data);
 
     // fft: complex_data should be a power of 2
     static void fft(QList<Complex> &complex_data);

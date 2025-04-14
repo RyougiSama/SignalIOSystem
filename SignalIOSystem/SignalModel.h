@@ -47,9 +47,10 @@ public:
     void saveSignalFromConfig(const QString &dir_name);
     void changeSignalNoise(NoiseGenerator::NoiseType noise_t);
     void autoConfigSingalFiltered(bool is_open);
+    void customizedSignalFiltered(bool is_open, double f_min, double f_max);
 
     const QString &get_student_id() const { return this->student_id; }
-    double get_signal_sample_rate() const { return this->signal_freq; }
+    double get_signal_sample_rate() const { return this->signal_sample_rate; }
     const QList<double> *get_signal_raw_data() const { return &this->signal_raw_data; }
     const QList<double> *get_signal_noisy_data() const { return &this->signal_noisy_data; }
     const QList<double> *get_signal_filtered_data() const { return &this->signal_filtered_data; }
@@ -80,7 +81,7 @@ private:
     QList<double> signal_filtered_data;
     // Signal from data
     QString student_id;
-    double signal_freq = 0;
+    double signal_sample_rate = 0;
     // Signal from config
     SignalConfig signal_config{ 0, { 0, 0, 0 }, { 0, 0, 0 } };
     static constexpr int k_generate_samples = 2048;

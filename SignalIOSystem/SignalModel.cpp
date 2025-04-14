@@ -2,6 +2,7 @@
 
 #include <qmessagebox.h>
 #include <qmath.h>
+#include "SignalFilter.h"
 
 SignalModel::SignalModel(QObject *parent)
     : QObject(parent)
@@ -26,7 +27,7 @@ void SignalModel::loadSignalFromData(const QString &file_name)
     auto head_line = in.readLine().trimmed();
     auto head_line_parts = head_line.split(' ', Qt::SkipEmptyParts);
     this->student_id = head_line_parts[0];
-    this->signal_freq = head_line_parts[1].toDouble();
+    this->signal_sample_rate = head_line_parts[1].toDouble();
 
     this->signal_raw_data.clear();
     while (!in.atEnd()) {
@@ -106,6 +107,24 @@ void SignalModel::autoConfigSingalFiltered(bool is_open)
             );
             this->signal_filtered_data.append(sine1);
         }
+    }
+}
+
+void SignalModel::customizedSignalFiltered(bool is_open, double f_min, double f_max)
+{
+    if (is_open) {
+        double sr{};
+        switch (this->curr_signal_file_t) {
+        case SignalFileType::LOAD_FROM_DATA:
+            sr = this->signal_sample_rate;
+            break;
+        case SignalFileType::LOAD_FROM_CONFIG:
+            sr = this->signal_config.sample_rate;
+        }
+        auto complex_data = SignalFilter::zero_padding(this->signal_raw_data);
+        SignalFilter::fft(complex_data);
+        SignalFilter::bandpass_filter(complex_data, f_min, f_max, sr);
+        this->signal_filtered_data = SignalFilter::idft(complex_data);
     }
 }
 

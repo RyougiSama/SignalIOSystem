@@ -127,7 +127,7 @@
            <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <property name="text">
-           <string>开启滤波</string>
+           <string>开启BPF</string>
           </property>
           <property name="checkable">
            <bool>true</bool>

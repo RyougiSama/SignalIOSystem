@@ -46,5 +46,5 @@ signals:
     void autoFilterState(bool is_open);
 
 signals:
-    void customizedSignalFiltered(bool is_open);
+    void customizedFilterstate(bool is_open, double f_min = -1, double f_max = -1);
 };

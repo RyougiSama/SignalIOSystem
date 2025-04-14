@@ -92,7 +92,7 @@ void SignalFreqDomainView::compute_spectrum(const QList<double> *p_signal)
     const auto &raw_data = *p_signal;
     auto N = raw_data.size();
     this->freq_resolution = this->sample_rate / N;
-    auto complex_data = zero_padding(raw_data);
+    auto complex_data = SignalFilter::zero_padding(raw_data);
     SignalFilter::fft(complex_data);
     this->magnitude.clear();
     for (int i = 0; i < N / 2 + 1; ++i) {
@@ -127,18 +127,5 @@ void SignalFreqDomainView::disp_spectrum()
     this->disp_series->replace(points);
 
     this->update();
-}
-
-QList<SignalFreqDomainView::Complex> SignalFreqDomainView::zero_padding(const QList<double> &raw_data)
-{
-    int padded_size = 1;
-    while (padded_size < raw_data.size()) {
-        padded_size *= 2;
-    }
-    QList<Complex> zero_padded_complex_data(padded_size);
-    for (int i = 0; i < padded_size; ++i) {
-        zero_padded_complex_data[i] = Complex((i < raw_data.size() ? raw_data[i] : 0), 0);
-    }
-    return zero_padded_complex_data;
 }
 
