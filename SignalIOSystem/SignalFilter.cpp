@@ -73,3 +73,17 @@ void SignalFilter::bandpass_filter(QList<Complex> &freq_data, double f_low, doub
     }
 }
 
+void SignalFilter::lowpass_filter(QList<Complex> &freq_data, double f_lim, double sr)
+{
+    const auto N = freq_data.size();
+    for (int k = 0; k <= N / 2; ++k) {
+        double f_k = k * sr / N;
+        if (f_k > f_lim) {
+            freq_data[k] = Complex(0.0, 0.0);
+            if (k > 0 && k < N / 2) {
+                freq_data[N - k] = Complex(0.0, 0.0);
+            }
+        }
+    }
+}
+

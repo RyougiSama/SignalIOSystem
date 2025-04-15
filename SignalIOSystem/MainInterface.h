@@ -32,6 +32,7 @@ private slots:
     void on_pushButton_addNoise_clicked(bool checked);
     void on_pushButton_autoFilter_clicked(bool checked);
     void on_pushButton_filterSwitch_clicked(bool checked);
+    void on_pushButton_modulation_clicked(bool checked);
 
 private:
     Ui::MainInterfaceClass *ui;
@@ -46,5 +47,8 @@ signals:
     void autoFilterState(bool is_open);
 
 signals:
-    void customizedFilterstate(bool is_open, double f_min = -1, double f_max = -1);
+    void customizedFilterState(bool is_open, double f_min = -1, double f_max = -1);
+
+signals:
+    void modulationState(bool is_open, double f_carrier);
 };

@@ -18,18 +18,23 @@ MainInterface::MainInterface(QWidget *parent)
     );
     ui->chartView_time->set_signal_model(this->model);
     ui->chartView_freq->set_signal_model(this->model);
-
+    // Validator
+    // Noise
     auto mean_validator = new QDoubleValidator(0, 9999, 2, this);
     mean_validator->setNotation(QDoubleValidator::StandardNotation);
     ui->lineEdit_noiseMean->setValidator(mean_validator);
     auto stddev_validator = new QDoubleValidator(0, 999, 2, this);
     stddev_validator->setNotation(QDoubleValidator::StandardNotation);
     ui->lineEdit_noiseStddev->setValidator(stddev_validator);
-
+    // Filter
     auto freq_limit_validator = new QDoubleValidator(SignalModel::k_min_freq, SignalModel::k_max_freq, 2, this);
     freq_limit_validator->setNotation(QDoubleValidator::StandardNotation);
     ui->lineEdit_maxFreq->setValidator(freq_limit_validator);
     ui->lineEdit_minFreq->setValidator(freq_limit_validator);
+    // Modulation
+    auto carrier_limit_validator = new QDoubleValidator(0, 9999, 2, this);
+    carrier_limit_validator->setNotation(QDoubleValidator::StandardNotation);
+    ui->lineEdit_carrierFreq->setValidator(carrier_limit_validator);
     // Connect Update Funtions
     QObject::connect(this->model, &SignalModel::signalFileLoaded, this, &MainInterface::updateRawSignalDiscription);
     QObject::connect(this->model, &SignalModel::signalFileLoaded, ui->chartView_time, &SignalTimeDomainView::loadSignalData);
@@ -40,9 +45,10 @@ MainInterface::MainInterface(QWidget *parent)
     QObject::connect(this, &MainInterface::autoFilterState, this->model, &SignalModel::autoConfigSingalFiltered);
     QObject::connect(this, &MainInterface::autoFilterState, ui->chartView_time, &SignalTimeDomainView::changeSignalFiltered);
     QObject::connect(this, &MainInterface::autoFilterState, ui->chartView_freq, &SignalFreqDomainView::changeSignalFiltered);
-    QObject::connect(this, &MainInterface::customizedFilterstate, this->model, &SignalModel::customizedSignalFiltered);
-    QObject::connect(this, &MainInterface::customizedFilterstate, ui->chartView_time, &SignalTimeDomainView::changeSignalFiltered);
-    QObject::connect(this, &MainInterface::customizedFilterstate, ui->chartView_freq, &SignalFreqDomainView::changeSignalFiltered);
+    QObject::connect(this, &MainInterface::customizedFilterState, this->model, &SignalModel::customizedSignalFiltered);
+    QObject::connect(this, &MainInterface::customizedFilterState, ui->chartView_time, &SignalTimeDomainView::changeSignalFiltered);
+    QObject::connect(this, &MainInterface::customizedFilterState, ui->chartView_freq, &SignalFreqDomainView::changeSignalFiltered);
+    QObject::connect(this, &MainInterface::modulationState, this->model, &SignalModel::modulationStateSwitch);
     // Timer
     QObject::connect(timer, &QTimer::timeout, ui->chartView_time, &SignalTimeDomainView::updateChartView);
     timer->start(50);
@@ -59,6 +65,7 @@ void MainInterface::updateRawSignalDiscription(SignalModel::SignalFileType file_
     ui->pushButton_addNoise->setEnabled(file_t != SignalModel::NONE);
     ui->pushButton_autoFilter->setEnabled(file_t == SignalModel::LOAD_FROM_CONFIG);
     ui->pushButton_filterSwitch->setEnabled(file_t != SignalModel::NONE);
+    ui->pushButton_modulation->setEnabled(file_t == SignalModel::LOAD_FROM_DATA);
 
     switch (file_t) {
     case SignalModel::NONE:
@@ -188,6 +195,10 @@ void MainInterface::on_pushButton_addNoise_clicked(bool checked)
         ui->pushButton_loadData->setEnabled(false);
         ui->pushButton_loadConfig->setEnabled(false);
         ui->pushButton_autoFilter->setEnabled(false);
+        ui->pushButton_filterSwitch->setEnabled(false);
+        ui->pushButton_modulation->setEnabled(false);
+        ui->pushButton_loadData->setEnabled(false);
+        ui->pushButton_loadConfig->setEnabled(false);
         ui->lineEdit_noiseMean->setEnabled(false);
         ui->lineEdit_noiseStddev->setEnabled(false);
         auto mean = ui->lineEdit_noiseMean->text().toDouble();
@@ -203,6 +214,10 @@ void MainInterface::on_pushButton_addNoise_clicked(bool checked)
         ui->pushButton_loadData->setEnabled(true);
         ui->pushButton_loadConfig->setEnabled(true);
         ui->pushButton_autoFilter->setEnabled(true);
+        ui->pushButton_filterSwitch->setEnabled(true);
+        ui->pushButton_modulation->setEnabled(true);
+        ui->pushButton_loadData->setEnabled(true);
+        ui->pushButton_loadConfig->setEnabled(true);
         ui->lineEdit_noiseMean->setEnabled(true);
         ui->lineEdit_noiseStddev->setEnabled(true);
         emit this->changeNoiseState(NoiseGenerator::NONE);
@@ -215,11 +230,19 @@ void MainInterface::on_pushButton_autoFilter_clicked(bool checked)
         ui->pushButton_autoFilter->setText("关闭cfg滤波");
         ui->pushButton_addNoise->setEnabled(false);
         ui->pushButton_filterSwitch->setEnabled(false);
+        ui->pushButton_modulation->setEnabled(false);
+        ui->pushButton_loadData->setEnabled(false);
+        ui->pushButton_loadConfig->setEnabled(false);
+
         emit this->autoFilterState(true);
     } else {
         ui->pushButton_autoFilter->setText("自动cfg滤波");
         ui->pushButton_addNoise->setEnabled(true);
         ui->pushButton_filterSwitch->setEnabled(true);
+        ui->pushButton_modulation->setEnabled(true);
+        ui->pushButton_loadData->setEnabled(true);
+        ui->pushButton_loadConfig->setEnabled(true);
+
         emit this->autoFilterState(false);
     }
 }
@@ -249,16 +272,63 @@ void MainInterface::on_pushButton_filterSwitch_clicked(bool checked)
         ui->lineEdit_maxFreq->setEnabled(false);
         ui->pushButton_addNoise->setEnabled(false);
         ui->pushButton_autoFilter->setEnabled(false);
+        ui->pushButton_modulation->setEnabled(false);
+        ui->pushButton_loadData->setEnabled(false);
+        ui->pushButton_loadConfig->setEnabled(false);
 
-        emit this->customizedFilterstate(true, min_freq, max_freq);
+        emit this->customizedFilterState(true, min_freq, max_freq);
     } else {
         ui->pushButton_filterSwitch->setText("开启BPF");
         ui->lineEdit_minFreq->setEnabled(true);
         ui->lineEdit_maxFreq->setEnabled(true);
         ui->pushButton_addNoise->setEnabled(true);
         ui->pushButton_autoFilter->setEnabled(true);
+        ui->pushButton_modulation->setEnabled(true);
+        ui->pushButton_loadData->setEnabled(true);
+        ui->pushButton_loadConfig->setEnabled(true);
 
-        emit this->customizedFilterstate(false);
+        emit this->customizedFilterState(false);
+    }
+}
+
+void MainInterface::on_pushButton_modulation_clicked(bool checked)
+{
+    if (checked) {
+        auto carrier_freq_text = ui->lineEdit_carrierFreq->text();
+        if (carrier_freq_text.isEmpty()) {
+            QMessageBox::warning(this, "Warning", "请先输入载波频率!");
+            ui->pushButton_modulation->setChecked(false);
+            return;
+        }
+        const auto carrier_freq = carrier_freq_text.toDouble();
+        const auto sr{ (this->model->curr_signal_file_t == SignalModel::LOAD_FROM_DATA) ? this->model->get_signal_sample_rate() : this->model->get_signal_config().sample_rate };
+        if (carrier_freq > sr / 2) {
+            QMessageBox::warning(this, "Waring", "载波频率大于1/2采样率，请重新输入!");
+            ui->pushButton_modulation->setChecked(false);
+            return;
+        }
+
+        ui->pushButton_modulation->setText("相干解调");
+        ui->pushButton_loadData->setEnabled(false);
+        ui->pushButton_loadConfig->setEnabled(false);
+        ui->pushButton_addNoise->setEnabled(false);
+        ui->pushButton_autoFilter->setEnabled(false);
+        ui->pushButton_filterSwitch->setEnabled(false);
+        ui->lineEdit_carrierFreq->setEnabled(false);
+
+        emit this->modulationState(true, carrier_freq);
+    } else {
+        auto carrier_freq = ui->lineEdit_carrierFreq->text().toDouble();
+
+        ui->pushButton_modulation->setText("DSB调制");
+        ui->pushButton_loadData->setEnabled(true);
+        ui->pushButton_loadConfig->setEnabled(true);
+        ui->pushButton_addNoise->setEnabled(true);
+        ui->pushButton_autoFilter->setEnabled(true);
+        ui->pushButton_filterSwitch->setEnabled(true);
+        ui->lineEdit_carrierFreq->setEnabled(true);
+
+        emit this->modulationState(false, carrier_freq);
     }
 }
 

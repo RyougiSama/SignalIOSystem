@@ -128,6 +128,17 @@ void SignalModel::customizedSignalFiltered(bool is_open, double f_min, double f_
     }
 }
 
+void SignalModel::modulationStateSwitch(bool is_open, double f_carrier)
+{
+    if (is_open) {
+        this->amplitude_modulation(f_carrier);
+        emit this->signalFileLoaded(this->curr_signal_file_t);
+    } else {
+        this->amplitude_demodulation(f_carrier);
+        emit this->signalFileLoaded(this->curr_signal_file_t);
+    }
+}
+
 // Tool functions
 void SignalModel::search_student_id_config(const QString &target_student_id)
 {
@@ -187,5 +198,34 @@ void SignalModel::generate_config_signal()
         );
         this->signal_raw_data.append(sine1 + sine2);
     }
+}
+
+void SignalModel::amplitude_modulation(double f_carrier)
+{
+    const auto sr{ (this->curr_signal_file_t == LOAD_FROM_DATA) ? this->signal_sample_rate : this->signal_config.sample_rate };
+
+    for (int i{ 0 }; i < this->signal_raw_data.size(); ++i) {
+        double t{ i / sr };
+        double carrier{ qCos(2 * M_PI * f_carrier * t) };
+        this->signal_raw_data[i] *= carrier;
+    }
+}
+
+void SignalModel::amplitude_demodulation(double f_carrier)
+{
+    const auto sr{ (this->curr_signal_file_t == LOAD_FROM_DATA) ? this->signal_sample_rate : this->signal_config.sample_rate };
+
+    for (int i{ 0 }; i < this->signal_raw_data.size(); ++i) {
+        double t{ i / sr };
+        double carrier{ qCos(2 * M_PI * f_carrier * t) };
+        this->signal_raw_data[i] *= carrier;
+    }
+
+    auto complex_data = SignalFilter::zero_padding(this->signal_raw_data);
+    SignalFilter::fft(complex_data);
+    SignalFilter::lowpass_filter(complex_data, f_carrier, sr);
+    auto tmp = SignalFilter::idft(complex_data);
+    tmp.resize(this->signal_raw_data.size());
+    this->signal_raw_data = std::move(tmp);
 }
 

@@ -25,4 +25,7 @@ public:
 
     // bandpass filter
     static void bandpass_filter(QList<Complex> &freq_data, double f_low, double f_high, double sr);
+
+    // lowpass filter
+    static void lowpass_filter(QList<Complex> &freq_data, double f_lim, double sr);
 };

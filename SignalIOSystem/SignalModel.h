@@ -48,6 +48,7 @@ public:
     void changeSignalNoise(NoiseGenerator::NoiseType noise_t);
     void autoConfigSingalFiltered(bool is_open);
     void customizedSignalFiltered(bool is_open, double f_min, double f_max);
+    void modulationStateSwitch(bool is_open, double f_carrier);
 
     const QString &get_student_id() const { return this->student_id; }
     double get_signal_sample_rate() const { return this->signal_sample_rate; }
@@ -63,6 +64,8 @@ public:
 private:
     void search_student_id_config(const QString &target_student_id);
     void generate_config_signal();
+    void amplitude_modulation(double f_carrier);
+    void amplitude_demodulation(double f_carrier);
 
 public:
     // Signal Flag

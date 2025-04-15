@@ -21,7 +21,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,2">
    <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,2,2,1">
+    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,3,2,1">
      <property name="rightMargin">
       <number>0</number>
      </property>
@@ -88,7 +88,58 @@
         <string>控制面板</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="2" column="2">
+        <item row="0" column="0">
+         <widget class="QPushButton" name="pushButton_stopWave">
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="text">
+           <string>停止波形</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" colspan="2">
+         <widget class="QPushButton" name="pushButton_autoFilter">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="text">
+           <string>自动cfg滤波</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="pushButton_addNoise">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="text">
+           <string>加入噪声</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2" colspan="2">
          <widget class="QComboBox" name="comboBox_noise">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -111,8 +162,41 @@
           </item>
          </widget>
         </item>
-        <item row="4" column="3">
-         <widget class="QLabel" name="label_4">
+        <item row="2" column="0">
+         <widget class="QPushButton" name="pushButton_modulation">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="text">
+           <string>DSB调制</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" colspan="2">
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>载波频率:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QLineEdit" name="lineEdit_carrierFreq">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="4">
+         <widget class="QLabel" name="label_7">
           <property name="text">
            <string>Hz</string>
           </property>
@@ -134,13 +218,6 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="3">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Hz</string>
-          </property>
-         </widget>
-        </item>
         <item row="3" column="1">
          <widget class="QLabel" name="label">
           <property name="text">
@@ -148,29 +225,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
-         <widget class="QPushButton" name="pushButton_autoFilter">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="cursor">
-           <cursorShape>PointingHandCursor</cursorShape>
-          </property>
-          <property name="text">
-           <string>自动cfg滤波</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
+        <item row="3" column="2" colspan="2">
          <widget class="QLineEdit" name="lineEdit_minFreq">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -180,19 +235,10 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
-         <widget class="QPushButton" name="pushButton_addNoise">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="cursor">
-           <cursorShape>PointingHandCursor</cursorShape>
-          </property>
+        <item row="3" column="4">
+         <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>加入噪声</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
+           <string>Hz</string>
           </property>
          </widget>
         </item>
@@ -203,7 +249,7 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="2">
+        <item row="4" column="2" colspan="2">
          <widget class="QLineEdit" name="lineEdit_maxFreq">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -213,16 +259,10 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="pushButton_stopWave">
-          <property name="cursor">
-           <cursorShape>PointingHandCursor</cursorShape>
-          </property>
+        <item row="4" column="4">
+         <widget class="QLabel" name="label_4">
           <property name="text">
-           <string>停止波形</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
+           <string>Hz</string>
           </property>
          </widget>
         </item>
