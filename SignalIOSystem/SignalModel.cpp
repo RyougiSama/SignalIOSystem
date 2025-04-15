@@ -53,11 +53,7 @@ void SignalModel::saveSignalFromConfig(const QString &dir_name)
 {
     auto file_name = dir_name + "/";
 
-    if (this->student_id == "2228410087") {
-        file_name = file_name + "14" + "_" + this->student_id + "_姜添翼out.dat";
-    } else {
-        file_name = file_name + this->student_id + "out.dat";
-    }
+    file_name = file_name + this->student_id + "_姜添翼" + "out.dat";
 
     this->file.setFileName(file_name);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {

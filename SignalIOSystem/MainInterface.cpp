@@ -124,22 +124,30 @@ QString MainInterface::get_noise_discription(int noise_id)
 // Slots
 void MainInterface::on_pushButton_loadData_clicked()
 {
+#if 0
     auto file_name = QFileDialog::getOpenFileName(this, "Open File", ".", "Data File (*.dat);;");
     if (file_name.isEmpty()) {
         QMessageBox::warning(this, "Warning", "请选择一个文件!");
         return;
     }
+#endif
+
+    auto file_name = R"(../data/14_2228410087.dat)";
     model->loadSignalFromData(file_name);
     ui->chartView_time->updateChartView();
 }
 
 void MainInterface::on_pushButton_loadConfig_clicked()
 {
+#if 0
     auto file_name = QFileDialog::getOpenFileName(this, "Open File", ".", "Config File (Signal.cfg);;");
     if (file_name.isEmpty()) {
         QMessageBox::warning(this, "Warning", "请选择一个文件!");
         return;
     }
+#endif
+
+    auto file_name = R"(../data/Signal.cfg)";
     model->loadSignalFromConfig(file_name, "14_2228410087");
     ui->chartView_time->updateChartView();
 }
@@ -150,11 +158,16 @@ void MainInterface::on_pushButton_saveCfgSignal_clicked()
         QMessageBox::warning(this, "Warning", "请先加载一个cfg文件!");
         return;
     }
+
+#if 0
     auto dir_name = QFileDialog::getExistingDirectory(this, "Save File", ".");
     if (dir_name.isEmpty()) {
         QMessageBox::warning(this, "Warning", "请选择保存目录!");
         return;
     }
+#endif
+
+    auto dir_name = R"(../data)";
     this->model->saveSignalFromConfig(dir_name);
 }
 
@@ -196,7 +209,9 @@ void MainInterface::on_pushButton_addNoise_clicked(bool checked)
         ui->pushButton_loadConfig->setEnabled(false);
         ui->pushButton_autoFilter->setEnabled(false);
         ui->pushButton_filterSwitch->setEnabled(false);
-        ui->pushButton_modulation->setEnabled(false);
+        if (this->model->curr_signal_file_t == SignalModel::LOAD_FROM_DATA) {
+            ui->pushButton_modulation->setEnabled(false);
+        }
         ui->pushButton_loadData->setEnabled(false);
         ui->pushButton_loadConfig->setEnabled(false);
         ui->lineEdit_noiseMean->setEnabled(false);
@@ -215,7 +230,9 @@ void MainInterface::on_pushButton_addNoise_clicked(bool checked)
         ui->pushButton_loadConfig->setEnabled(true);
         ui->pushButton_autoFilter->setEnabled(true);
         ui->pushButton_filterSwitch->setEnabled(true);
-        ui->pushButton_modulation->setEnabled(true);
+        if (this->model->curr_signal_file_t == SignalModel::LOAD_FROM_DATA) {
+            ui->pushButton_modulation->setEnabled(true);
+        }
         ui->pushButton_loadData->setEnabled(true);
         ui->pushButton_loadConfig->setEnabled(true);
         ui->lineEdit_noiseMean->setEnabled(true);
@@ -230,7 +247,9 @@ void MainInterface::on_pushButton_autoFilter_clicked(bool checked)
         ui->pushButton_autoFilter->setText("关闭cfg滤波");
         ui->pushButton_addNoise->setEnabled(false);
         ui->pushButton_filterSwitch->setEnabled(false);
-        ui->pushButton_modulation->setEnabled(false);
+        if (this->model->curr_signal_file_t == SignalModel::LOAD_FROM_DATA) {
+            ui->pushButton_modulation->setEnabled(false);
+        }
         ui->pushButton_loadData->setEnabled(false);
         ui->pushButton_loadConfig->setEnabled(false);
 
@@ -239,7 +258,9 @@ void MainInterface::on_pushButton_autoFilter_clicked(bool checked)
         ui->pushButton_autoFilter->setText("自动cfg滤波");
         ui->pushButton_addNoise->setEnabled(true);
         ui->pushButton_filterSwitch->setEnabled(true);
-        ui->pushButton_modulation->setEnabled(true);
+        if (this->model->curr_signal_file_t == SignalModel::LOAD_FROM_DATA) {
+            ui->pushButton_modulation->setEnabled(true);
+        }
         ui->pushButton_loadData->setEnabled(true);
         ui->pushButton_loadConfig->setEnabled(true);
 
@@ -272,7 +293,9 @@ void MainInterface::on_pushButton_filterSwitch_clicked(bool checked)
         ui->lineEdit_maxFreq->setEnabled(false);
         ui->pushButton_addNoise->setEnabled(false);
         ui->pushButton_autoFilter->setEnabled(false);
-        ui->pushButton_modulation->setEnabled(false);
+        if (this->model->curr_signal_file_t == SignalModel::LOAD_FROM_DATA) {
+            ui->pushButton_modulation->setEnabled(false);
+        }
         ui->pushButton_loadData->setEnabled(false);
         ui->pushButton_loadConfig->setEnabled(false);
 
@@ -283,7 +306,9 @@ void MainInterface::on_pushButton_filterSwitch_clicked(bool checked)
         ui->lineEdit_maxFreq->setEnabled(true);
         ui->pushButton_addNoise->setEnabled(true);
         ui->pushButton_autoFilter->setEnabled(true);
-        ui->pushButton_modulation->setEnabled(true);
+        if (this->model->curr_signal_file_t == SignalModel::LOAD_FROM_DATA) {
+            ui->pushButton_modulation->setEnabled(true);
+        }
         ui->pushButton_loadData->setEnabled(true);
         ui->pushButton_loadConfig->setEnabled(true);
 
