@@ -228,7 +228,9 @@ void MainInterface::on_pushButton_addNoise_clicked(bool checked)
         ui->comboBox_noise->setEnabled(true);
         ui->pushButton_loadData->setEnabled(true);
         ui->pushButton_loadConfig->setEnabled(true);
-        ui->pushButton_autoFilter->setEnabled(true);
+        if (this->model->curr_signal_file_t == SignalModel::LOAD_FROM_CONFIG) {
+            ui->pushButton_autoFilter->setEnabled(true);
+        }
         ui->pushButton_filterSwitch->setEnabled(true);
         if (this->model->curr_signal_file_t == SignalModel::LOAD_FROM_DATA) {
             ui->pushButton_modulation->setEnabled(true);
@@ -305,9 +307,11 @@ void MainInterface::on_pushButton_filterSwitch_clicked(bool checked)
         ui->lineEdit_minFreq->setEnabled(true);
         ui->lineEdit_maxFreq->setEnabled(true);
         ui->pushButton_addNoise->setEnabled(true);
-        ui->pushButton_autoFilter->setEnabled(true);
         if (this->model->curr_signal_file_t == SignalModel::LOAD_FROM_DATA) {
             ui->pushButton_modulation->setEnabled(true);
+        }
+        if (this->model->curr_signal_file_t == SignalModel::LOAD_FROM_CONFIG) {
+            ui->pushButton_autoFilter->setEnabled(true);
         }
         ui->pushButton_loadData->setEnabled(true);
         ui->pushButton_loadConfig->setEnabled(true);
